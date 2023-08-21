@@ -16,32 +16,18 @@ jobs:
       - name: Deployment started
         run: echo "Deployment to Ubuntu and Docker started successfully!"
 
-      - name: Upload file to Ubuntu
+      - name: Upload file to EC2
         run: |
           scp -i ${{ secrets.SSH_PRIVATE_KEY }} /path/to/your/local/file ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com:/path/on/server/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: SSH into Ubuntu and build Docker image
+      - name: SSH into EC2 and deploy Docker container
         run: |
           ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com '
             cd /path/on/server/
             docker build -t my-new-container-name .
-          '
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Stop old Docker container
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com '
             docker stop my-old-container-name || true
-          '
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Run new Docker container
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com '
             docker run -d -p 8080:8080 --name my-new-container-name my-new-container-name
           '
         env:
