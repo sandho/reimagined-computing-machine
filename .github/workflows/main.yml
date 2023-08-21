@@ -13,6 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Deployment started
+        run: echo "Deployment to Ubuntu and Docker started successfully!"
+
       - name: Upload file to Ubuntu
         run: |
           scp -i ${{ secrets.SSH_PRIVATE_KEY }} /path/to/your/local/file ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com:/path/on/server/
