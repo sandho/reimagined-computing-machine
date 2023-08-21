@@ -1,0 +1,48 @@
+name: Deploy to Ubuntu and Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Upload file to Ubuntu
+        run: |
+          scp -i ${{ secrets.SSH_PRIVATE_KEY }} /path/to/your/local/file ubuntu@your_server_ip:/path/on/server/
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: SSH into Ubuntu and build Docker image
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@your_server_ip '
+            cd /path/on/server/
+            docker build -t my-new-container-name .
+          '
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Stop old Docker container
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@your_server_ip '
+            docker stop my-old-container-name || true
+          '
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Run new Docker container
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@your_server_ip '
+            docker run -d -p 8080:8080 --name my-new-container-name my-new-container-name
+          '
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deployment completed
+        run: echo "Deployment to Ubuntu and Docker completed successfully!"
