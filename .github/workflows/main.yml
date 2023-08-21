@@ -15,13 +15,13 @@ jobs:
 
       - name: Upload file to Ubuntu
         run: |
-          scp -i ${{ secrets.SSH_PRIVATE_KEY }} /path/to/your/local/file ubuntu@your_server_ip:/path/on/server/
+          scp -i ${{ secrets.SSH_PRIVATE_KEY }} /path/to/your/local/file ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com:/path/on/server/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: SSH into Ubuntu and build Docker image
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@your_server_ip '
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com '
             cd /path/on/server/
             docker build -t my-new-container-name .
           '
@@ -30,7 +30,7 @@ jobs:
 
       - name: Stop old Docker container
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@your_server_ip '
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com '
             docker stop my-old-container-name || true
           '
         env:
@@ -38,7 +38,7 @@ jobs:
 
       - name: Run new Docker container
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@your_server_ip '
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ubuntu@ec2-65-0-129-62.ap-south-1.compute.amazonaws.com '
             docker run -d -p 8080:8080 --name my-new-container-name my-new-container-name
           '
         env:
